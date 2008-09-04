@@ -1,0 +1,24 @@
+---
+abstract: 'module files are collected from some directories'
+author:
+  - 'Kazuhiro Osawa <ko@yappo.ne.jp>'
+build_requires:
+  Test::More: 0
+distribution_type: module
+generated_by: 'Module::Install version 0.760'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Module-Collect
+no_index:
+  directory:
+    - inc
+    - t
+requires:
+  Carp: 0
+  File::Find::Rule: 0
+  File::Spec::Functions: 0
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.01
