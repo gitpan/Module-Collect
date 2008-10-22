@@ -1,11 +1,10 @@
 package Module::Collect;
 use strict;
 use warnings;
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 use Carp;
 use File::Find::Rule;
-use File::Spec::Functions;
 use Module::Collect::Package;
 
 sub new {
@@ -42,12 +41,14 @@ sub _find_modules {
 
 sub _add_module {
     my($self, $modulefile) = @_;
-    my $package = $self->_extract_package($modulefile);
-    return unless $package;
-    push @{ $self->{modules} },Module::Collect::Package->new(
-        package => $package,
-        path    => $modulefile,
-    );
+    my @packages = $self->_extract_package($modulefile);
+    return unless @packages;
+    for (@packages) {
+        push @{ $self->{modules} }, Module::Collect::Package->new(
+            package => $_,
+            path    => $modulefile,
+        );
+    }
 }
 
 sub _extract_package {
@@ -58,6 +59,7 @@ sub _extract_package {
     $prefix .= '::' if $prefix;
     $prefix = '' unless $prefix;
 
+    return _extract_multiple_package($fh, $prefix) if $self->{multiple};
     my $in_pod = 0;
     while (<$fh>) {
         $in_pod = 1 if m/^=\w/;
@@ -68,6 +70,22 @@ sub _extract_package {
         /^\s*package\s+($prefix.*?)\s*;/ and return $1;
     }
     return;
+}
+
+sub _extract_multiple_package {
+    my($fh, $prefix) = @_;
+
+    my $in_pod = 0;
+    my @packages;
+    while (<$fh>) {
+        $in_pod = 1 if m/^=\w/;
+        $in_pod = 0 if /^=cut/;
+        next if ($in_pod || /^=cut/);  # skip pod text
+        next if /^\s*\#/;
+
+        /^\s*package\s+($prefix.*?)\s*;/ and push @packages, $1;
+    }
+    return @packages;
 }
 
 sub modules {
@@ -91,6 +109,7 @@ Module::Collect - module files are collected from some directories
       path   => '/foo/bar/plugins',
       prefix => 'MyApp::Plugin', # not required option
       pattern => '*.pm',         # not required option
+      multiple => 1,             # not required option see t/06_multiple.t
   );
 
   my @modules = @{ $collect->modules };

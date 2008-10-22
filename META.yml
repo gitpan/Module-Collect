@@ -3,6 +3,8 @@ abstract: 'module files are collected from some directories'
 author:
   - 'Kazuhiro Osawa <ko@yappo.ne.jp>'
 build_requires:
+  File::Spec: 0
+  File::Spec::Functions: 0
   Test::More: 0
 distribution_type: module
 generated_by: 'Module::Install version 0.760'
@@ -18,7 +20,6 @@ no_index:
 requires:
   Carp: 0
   File::Find::Rule: 0
-  File::Spec::Functions: 0
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.04
+version: 0.05
