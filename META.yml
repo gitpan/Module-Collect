@@ -1,13 +1,14 @@
 ---
-abstract: 'module files are collected from some directories'
+abstract: 'Collect sub-modules in directories'
 author:
   - 'Kazuhiro Osawa <ko@yappo.ne.jp>'
 build_requires:
-  File::Spec: 0
-  File::Spec::Functions: 0
+  ExtUtils::MakeMaker: 6.42
   Test::More: 0
+configure_requires:
+  ExtUtils::MakeMaker: 6.42
 distribution_type: module
-generated_by: 'Module::Install version 0.760'
+generated_by: 'Module::Install version 0.91'
 license: perl
 meta-spec:
   url: http://module-build.sourceforge.net/META-spec-v1.4.html
@@ -19,7 +20,10 @@ no_index:
     - t
 requires:
   Carp: 0
-  File::Find::Rule: 0
+  File::Spec: 0
+  Text::Glob: 0.07
+  perl: 5.6.2
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.05
+  repository: git://github.com/yappo/p5-Module-Collect.git
+version: 0.06

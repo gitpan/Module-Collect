@@ -1,27 +1,78 @@
-This is Perl module Module::Collect.
+NAME
+    Module::Collect - Collect sub-modules in directories
 
-INSTALLATION
+SYNOPSIS
+      use Module::Collect;
+      my $collect = Module::Collect->new(
+          path     => '/foo/bar/plugins',
+          prefix   => 'MyApp::Plugin', # optional
+          pattern  => '*.pm',          # optional
+          multiple => 1,               # optional, see t/06_multiple.t
+      );
 
-Module::Collect installation is straightforward. If your CPAN shell is set up,
-you should just be able to do
+      my @modules = @{ $collect->modules };
+      for my $module (@modules) {
+          print $module->path;    # package fuke oatg
+          print $module->package; # package name
+          $module->require;       # require package
+          my $obj = $module->new; # aliae for $module->package->new
+      }
 
-    % cpan Module::Collect
+DESCRIPTION
+    Module::Collect finds sub-modules, or plugins in directories.
 
-Download it, unpack it, then build it as per the usual:
+    The following directory composition
 
-    % perl Makefile.PL
-    % make && make test
+      $ ls -R t/plugins
+      t/plugins:
+      empty.pm  foo  foo.pm  pod.pm  withcomment.pm  withpod.pm
 
-Then install it:
+      t/plugins/foo:
+      bar.pm  baz.plugin
 
-    % make install
+    The following code is executed
 
-DOCUMENTATION
+      use strict;
+      use warnings;
+      use Module::Collect;
+      use Perl6::Say;
 
-Module::Collect documentation is available as in POD. So you can do:
+      my $c = Module::Collect->new( path => 't/plugins' );
+      for my $module (@{ $c->modules }) {
+          say $module->package . ', ', $module->path;
+          $module->require;
+      }
 
-    % perldoc Module::Collect
+    results
 
-to read the documentation online with your favorite pager.
+      MyApp::Foo, t/plugins/foo.pm
+      With::Comment, t/plugins/withcomment.pm
+      With::Pod, t/plugins/withpod.pm
+      MyApp::Foo::Bar, t/plugins/foo/bar.pm
 
-Kazuhiro Osawa
+AUTHOR
+    Kazuhiro Osawa <ko@yappo.ne.jp>
+
+    lopnor
+
+    gfx
+
+    mattn
+
+INSPIRED BY
+    Plagger, Module::Pluggable
+
+SEE ALSO
+    Module::Collect::Package
+
+REPOSITORY
+      git clone git://github.com/yappo/p5-Module-Collect.git
+
+    Module::Collect is git repository is hosted at
+    <http://github.com/yappo/p5-Module-Collect>. patches and collaborators
+    are welcome.
+
+LICENSE
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
